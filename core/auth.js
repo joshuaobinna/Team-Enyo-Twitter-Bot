@@ -1,9 +1,9 @@
 const bcrypt = require('bcrypt')
-const { Pool } = require('pg')
+const { Client } = require('pg')
 
 function connect_db() {
     try {
-        const client = new Pool({
+        const client = new Client({
             user: 'bekcbtslclxxpu',
             host: 'ec2-54-246-92-116.eu-west-1.compute.amazonaws.com',
             database: 'd1f4td59bqc51g',
@@ -26,7 +26,9 @@ async function exec_query(client, sql, params) {
             values: params,
         }
 
-        return await client.query(q)
+        result =  await client.query(q)
+        await client.end()
+        return result
     } catch (e) {
         console.log(e)
         return false
@@ -155,7 +157,7 @@ async function get_tweets(user_id) {
 
 async function add_tweet(tweet,user_id) {
     client = connect_db()
-    params = [tweet.id_str,tweet.text,tweet.created_at, user_id]
+    params = [tweet.id,tweet.text,tweet.created_at, user_id]
     sql = 'INSERT INTO tweets (id,text,createdon, account_id) VALUES ($1, $2, $3, $4)'
     q = await exec_query(client, sql, params)
     if (!q) {
