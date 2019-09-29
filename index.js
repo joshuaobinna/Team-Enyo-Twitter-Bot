@@ -111,6 +111,11 @@ app.get('/auth/callback', auth1, passport.authenticate('twitter', { failureRedir
 
 
 app.get('/profile', auth1, function(req, res) {
+    // var request = require('sync-request');
+    // var r = request('post','http://localhost:8081/get-twitter-accounts', {
+    //     body: 'user_id=11'
+    // })
+    // console.log(r.getBody());
     res.render('profile', { layout: false, user:req.session.user })
 })
 

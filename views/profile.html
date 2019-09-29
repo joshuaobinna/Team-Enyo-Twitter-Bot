@@ -41,19 +41,23 @@
                     <q>Knowing is not enough, we must apply it.</q>
                 </div>
                 <div class="profile-pic">
-                    <img class="images" src="https://res.cloudinary.com/yagmus/image/upload/v1566519244/felix_mndbjf.jpg" alt="profile picture">
+                    <img class="images" height="512" width="512" style="border-radius: 100%" src="https://cdn1.iconfinder.com/data/icons/avatar-1-2/512/User2-512.png" alt="profile picture">
                     <div class="user-name-right">
                         <h4>{{ user.firstname }} {{ user.lastname }}</h4>
-                        <!-- <p>@judie</p> -->
+                        <p>@{{ user.email }}</p>
                     </div>
                 </div>
                 <br><br>
                 <a href="#">
-                    <li> <img src="https://res.cloudinary.com/walebant/image/upload/v1569500423/samples/enyo-bot/tweets.svg" alt="tweets-icon"> Tweets</li>
+                    <li> <img src="https://res.cloudinary.com/walebant/image/upload/v1569500423/samples/enyo-bot/tweets.svg" alt="tweets-icon"> Twitter Accounts
+                    <ul id="list-of-accounts">
+                        <li>Loading ...</li>
+                    </ul>
+                    </li>
                 </a>
-                <a href="#">
-                    <li> <img src="https://res.cloudinary.com/walebant/image/upload/v1569500423/samples/enyo-bot/tweets.svg" alt="tweets-icon"> Threads</li>
-                </a>
+                <a href="/authenticate">
+                    <li> <img src="https://res.cloudinary.com/walebant/image/upload/v1569500423/samples/enyo-bot/tweets.svg" alt="tweets-icon">Authenticate account</li>
+                </a><!-- 
                 <a href="#">
                     <li> <img src="https://res.cloudinary.com/walebant/image/upload/v1569500404/samples/enyo-bot/manage.svg" alt="manage-icon"> Manage</li>
                 </a>
@@ -62,7 +66,7 @@
                 </a>
                 <a href="#">
                     <li> <img src="https://res.cloudinary.com/walebant/image/upload/v1569500397/samples/enyo-bot/help.svg" alt="help-icon"> Help</li>
-                </a>
+                </a> -->
             </ul>
         </div>
     </nav>
@@ -78,18 +82,9 @@
                             <th>Created on</th>
                             <th>Link</th>
                         </tr>
-                        <span id="tweets">                            
                         <tr class="cont">
-                            <td>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Cupiditate modi autem amet,</td>
-                            <td>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Cupiditate modi autem amet,</td>
-                            <td>20/09/2019</td>
+                            <td colspan="3" style="text-align: center;">Loading tweets please hold on ... </td>
                         </tr>
-                        <tr class="cont">
-                            <td>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Cupiditate modi autem amet,</td>
-                            <td>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Cupiditate modi autem amet,</td>
-                            <td>20/09/2019</td>
-                        </tr>
-                        </span>
                     </table>
                 </div>
             </div>
@@ -102,44 +97,62 @@
 </body>
 
 </html>
-
 <script>
 async function load() {
-    f1  = new FormData()
-    f1.append('user_id',{{ user.id }})
+    fetched_tweets = 0
+    twitter_accounts = 0
+    f1 = new FormData()
+    f1.append('user_id', {{ user.id }})
     response1 = await fetch('/get-twitter-accounts', {
         method: 'post',
         body: f1
     })
     data1 = await response1.json()
     twitter_accts = data1.data
-    for(acct of twitter_accts){
+    twitter_accounts = twitter_accts.length
+    if (twitter_accounts > 0) {
+        document.querySelector('#list-of-accounts').innerHTML = ''
+    }
+    for (acct of twitter_accts) {
+        document.querySelector('#list-of-accounts').innerHTML +=  `<a href="https://twitter.com/${acct.displayname}/">${acct.displayname}</a>`
         f2 = new FormData()
         f2.append('user_id', acct.id)
-        response2 = await fetch('/update-tweets',{
+        response2 = await fetch('/update-tweets', {
             method: 'post',
             body: f2
         })
         data2 = await response2.json()
     }
-    for(acct of twitter_accts){
+    for (acct of twitter_accts) {
         f3 = new FormData()
         f3.append('user_id', acct.id)
-        response3 = await fetch('/fetch-tweets',{
+        response3 = await fetch('/fetch-tweets', {
             method: 'post',
             body: f3
         })
         data3 = await response3.json()
-        alert(data3)
+        // alert(data3)
+        fetched_tweets += data3.length
         console.log(data3)
-        for(tweet of data3.data){
-            document.querySelector('#tweets').innerHTML += `
+        document.querySelector('tbody').innerHTML = '<tr><th>Tweets</th><th>Created on</th><th>Link</th></tr>'
+        for (tweet of data3.data) {
+            document.querySelector('tbody').innerHTML += `
             <tr class="cont">
                 <td>${tweet.text}</td>
                 <td>${tweet.createdon}</td>
-                <td>https://twitter.com/${JSON.stringify(acct)}/status/${tweet.id}</td>
+                <td><a target="_blank" href="https://twitter.com/${acct.displayname}/status/${tweet.id}">https://twitter.com/${JSON.stringify(acct.displayname)}/status/${tweet.id}</a></td>
             </tr>`
         }
+    }    
+    if (twitter_accounts == 0) {
+        document.querySelector('#list-of-accounts').innerHTML = '[No account linked]'
+    }
+    if (fetched_tweets == 0) {
+        document.querySelector('tbody').innerHTML = ''
+        document.querySelector('tbody').innerHTML += `
+            <tr class="cont">
+                <td colspan="3" style="text-align: center;">No tweets Found!</td>
+            </tr>`
     }
 }
 load()

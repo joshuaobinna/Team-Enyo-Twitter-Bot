@@ -155,7 +155,7 @@ async function get_tweets(user_id) {
 
 async function add_tweet(tweet,user_id) {
     client = connect_db()
-    params = [tweet.id,tweet.text,tweet.created_at, user_id]
+    params = [tweet.id_str,tweet.text,tweet.created_at, user_id]
     sql = 'INSERT INTO tweets (id,text,createdon, account_id) VALUES ($1, $2, $3, $4)'
     q = await exec_query(client, sql, params)
     if (!q) {
