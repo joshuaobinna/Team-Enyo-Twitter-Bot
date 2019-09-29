@@ -37,14 +37,14 @@
             <span></span>
             <ul id="menu">
                 <div class="name-intro">
-                    <h3>Welcome Jude</h3>
+                    <h3>Welcome {{ user.firstname }}</h3>
                     <q>Knowing is not enough, we must apply it.</q>
                 </div>
                 <div class="profile-pic">
                     <img class="images" src="https://res.cloudinary.com/yagmus/image/upload/v1566519244/felix_mndbjf.jpg" alt="profile picture">
                     <div class="user-name-right">
-                        <h4>Judie Edima</h4>
-                        <p>@judie</p>
+                        <h4>{{ user.firstname }} {{ user.lastname }}</h4>
+                        <!-- <p>@judie</p> -->
                     </div>
                 </div>
                 <br><br>
@@ -78,11 +78,18 @@
                             <th>Created on</th>
                             <th>Link</th>
                         </tr>
+                        <span id="tweets">                            
                         <tr class="cont">
                             <td>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Cupiditate modi autem amet,</td>
                             <td>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Cupiditate modi autem amet,</td>
                             <td>20/09/2019</td>
                         </tr>
+                        <tr class="cont">
+                            <td>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Cupiditate modi autem amet,</td>
+                            <td>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Cupiditate modi autem amet,</td>
+                            <td>20/09/2019</td>
+                        </tr>
+                        </span>
                     </table>
                 </div>
             </div>
@@ -99,7 +106,7 @@
 <script>
 async function load() {
     f1  = new FormData()
-    f1.append('user_id',11)
+    f1.append('user_id',{{ user.id }})
     response1 = await fetch('/get-twitter-accounts', {
         method: 'post',
         body: f1
@@ -125,6 +132,14 @@ async function load() {
         data3 = await response3.json()
         alert(data3)
         console.log(data3)
+        for(tweet of data3.data){
+            document.querySelector('#tweets').innerHTML += `
+            <tr class="cont">
+                <td>${tweet.text}</td>
+                <td>${tweet.createdon}</td>
+                <td>https://twitter.com/${JSON.stringify(acct)}/status/${tweet.id}</td>
+            </tr>`
+        }
     }
 }
 load()

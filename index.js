@@ -111,7 +111,7 @@ app.get('/auth/callback', auth1, passport.authenticate('twitter', { failureRedir
 
 
 app.get('/profile', auth1, function(req, res) {
-    res.render('profile', { layout: false, user_id:req.session.user.id })
+    res.render('profile', { layout: false, user:req.session.user })
 })
 
 app.get('/authenticate', auth1, function(req, res) {
