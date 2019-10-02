@@ -27,11 +27,10 @@ async function exec_query(client, sql, params) {
         }
 
         result =  await client.query(q)
-        await client.end()
+        // await client.end()
         return result
     } catch (e) {
-        await client.end()
-        // console.log(e)
+        console.log(e)
         return false
     }
 
