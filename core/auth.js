@@ -10,6 +10,8 @@ function connect_db() {
             password: 'ae6977e963357480a401a21cef24de9450ffa7d5b9013f4d7cd28d3582435e3a',
             port: 5432,
             ssl: true,
+            idleTimeoutMillis: 10000,
+            connectionTimeoutMillis: 5000,
         })
         client.connect()
         return client
