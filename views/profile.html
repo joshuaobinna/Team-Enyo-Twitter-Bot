@@ -114,7 +114,7 @@ async function load() {
         document.querySelector('#list-of-accounts').innerHTML = ''
     }
     for (acct of twitter_accts) {
-        document.querySelector('#list-of-accounts').innerHTML +=  `<a href="https://twitter.com/${acct.displayname}/">${acct.displayname}</a>`
+        document.querySelector('#list-of-accounts').innerHTML +=  `<li><a href="https://twitter.com/${acct.displayname}/">${acct.displayname}</a></li>`
         f2 = new FormData()
         f2.append('user_id', acct.id)
         response2 = await fetch('/update-tweets', {
@@ -123,6 +123,7 @@ async function load() {
         })
         data2 = await response2.json()
     }
+    document.querySelector('tbody').innerHTML = '<tr><th>Tweets</th><th>Created on</th><th>Link</th></tr>'
     for (acct of twitter_accts) {
         f3 = new FormData()
         f3.append('user_id', acct.id)
@@ -134,7 +135,6 @@ async function load() {
         // alert(data3)
         fetched_tweets += data3.length
         console.log(data3)
-        document.querySelector('tbody').innerHTML = '<tr><th>Tweets</th><th>Created on</th><th>Link</th></tr>'
         for (tweet of data3.data) {
             document.querySelector('tbody').innerHTML += `
             <tr class="cont">

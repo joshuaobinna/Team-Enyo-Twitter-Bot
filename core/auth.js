@@ -1,9 +1,9 @@
 const bcrypt = require('bcrypt')
-const { Client } = require('pg')
+const { Pool } = require('pg')
 
 function connect_db() {
     try {
-        const client = new Client({
+        const client = new Pool({
             user: 'bekcbtslclxxpu',
             host: 'ec2-54-246-92-116.eu-west-1.compute.amazonaws.com',
             database: 'd1f4td59bqc51g',
