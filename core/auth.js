@@ -26,12 +26,12 @@ async function exec_query(client, sql, params) {
             values: params,
         }
 
-        result =  await client.query(q)
-        // await client.end()
-        return result
+        return await client.query(q)
     } catch (e) {
         console.log(e)
         return false
+    } finally {
+        client.end()
     }
 
 }
@@ -83,29 +83,29 @@ function check_params(request, params) {
             }
             break
         }
-    	value = request[param].trim()
-    	if ((!value || value == undefined || value == "" || value.length == 0)) {
-    		return {
+        value = request[param].trim()
+        if ((!value || value == undefined || value == "" || value.length == 0)) {
+            return {
                 status: false,
                 message: `${param} is required!`
             }
-    	}
+        }
         p[param] = request[param]
     }
     return {
-    	status: true,
-    	message: 'All clear',
-    	data: p
+        status: true,
+        message: 'All clear',
+        data: p
     }
 }
 
-async function new_twitter_account(id,display_name,full_name,user_id) {
+async function new_twitter_account(id, display_name, full_name, user_id) {
     client = connect_db()
     sql = 'INSERT INTO twitter_accounts (id,displayname,fullname,user_id) VALUES ($1,$2,$3,$4)'
-    params = [ id,display_name,full_name,user_id ]
+    params = [id, display_name, full_name, user_id]
     stored = await exec_query(client, sql, params)
     if (stored == false) {
-        return{
+        return {
             status: false,
             message: 'Data not stored!'
         }
@@ -119,7 +119,7 @@ async function new_twitter_account(id,display_name,full_name,user_id) {
 async function get_twitter_accounts(user_id) {
     client = connect_db()
     sql = 'select * from twitter_accounts where user_id = $1'
-    params = [ user_id ]
+    params = [user_id]
     query = await exec_query(client, sql, params)
     if (query.rows.length < 1) {
         return {
@@ -138,7 +138,7 @@ async function get_twitter_accounts(user_id) {
 async function get_tweets(user_id) {
     client = connect_db()
     sql = 'select * from tweets where account_id = $1'
-    params = [ user_id ]
+    params = [user_id]
     query = await exec_query(client, sql, params)
     if (query.rows.length < 1) {
         return {
@@ -152,16 +152,16 @@ async function get_tweets(user_id) {
         status: true,
         message: 'Tweets(s) found!!',
         data: accounts
-    }   
+    }
 }
 
-async function add_tweet(tweet,user_id) {
+async function add_tweet(tweet, user_id) {
     client = connect_db()
-    params = [tweet.id_str,tweet.text,tweet.created_at, user_id]
+    params = [tweet.id_str, tweet.text, tweet.created_at, user_id]
     sql = 'INSERT INTO tweets (id,text,createdon, account_id) VALUES ($1, $2, $3, $4)'
     q = await exec_query(client, sql, params)
     if (!q) {
-        return{            
+        return {
             status: false,
             message: 'Tweet could not be saved!'
         }
@@ -180,7 +180,7 @@ async function update_tweets(all_tweets, user_id) {
     for (tweet of all_tweets) {
         if (!p_tweets.includes(tweet)) {
             new_count += 1
-            added = await add_tweet(tweet,user_id)
+            added = await add_tweet(tweet, user_id)
             if (added.status) { stored_count += 1 }
         }
     }
@@ -194,8 +194,8 @@ module.exports = { connect_db, signin, signup, check_params, new_twitter_account
 
 // client = connect_db();
 // // signup(client,'Claret','Nnamocha','devclareo@gmail.com','Alpha').then(response => {
-// // 	console.log(response)
+// //   console.log(response)
 // // })
 // signin(client,'devclareo@gmail.com', 'Alpha').then(response => {
-// 	console.log(response)
+//  console.log(response)
 // })
