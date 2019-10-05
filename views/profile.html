@@ -55,6 +55,9 @@
                     </ul>
                     </li>
                 </a>
+                <a href="#" onclick="update_tweets()">
+                    <li> <img src="https://res.cloudinary.com/walebant/image/upload/v1569500423/samples/enyo-bot/tweets.svg" alt="tweets-icon">Update tweets</li>
+                </a>
                 <a href="/authenticate">
                     <li> <img src="https://res.cloudinary.com/walebant/image/upload/v1569500423/samples/enyo-bot/tweets.svg" alt="tweets-icon">Authenticate account</li>
                 </a><!-- 
@@ -115,14 +118,8 @@ async function load() {
     }
     for (acct of twitter_accts) {
         document.querySelector('#list-of-accounts').innerHTML +=  `<li><a href="https://twitter.com/${acct.displayname}/">${acct.displayname}</a></li>`
-        f2 = new FormData()
-        f2.append('user_id', acct.id)
-        response2 = await fetch('/update-tweets', {
-            method: 'post',
-            body: f2
-        })
-        data2 = await response2.json()
     }
+
     document.querySelector('tbody').innerHTML = '<tr><th>Tweets</th><th>Created on</th><th>Link</th></tr>'
     for (acct of twitter_accts) {
         f3 = new FormData()
@@ -154,6 +151,26 @@ async function load() {
                 <td colspan="3" style="text-align: center;">No tweets Found!</td>
             </tr>`
     }
+    return twitter_accts
 }
-load()
+
+async function update(twitter_accts) {    
+    for (acct of twitter_accts) {
+        f2 = new FormData()
+        f2.append('user_id', acct.id)
+        response2 = await fetch('/update-tweets', {
+            method: 'post',
+            body: f2
+        })
+        data2 = await response2.json()
+    }
+    load()
+}
+
+
+let twc = load()
+
+function update_tweets() {
+    update(twc)
+}
 </script>

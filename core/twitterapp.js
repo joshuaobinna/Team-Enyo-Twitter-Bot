@@ -11,8 +11,8 @@ var TBot = new Twitter({
 
 // async function search_tweets(hashtag) {
 //     TBot.get('search/tweets', {
-//         q: hashtag,
-//         count: 20,
+//         q: "#teamEnyo",
+//         count: 10,
 //         result_type: 'recent',
 //         lang: 'en'
 //     }, (err, data, response) => {
@@ -28,5 +28,8 @@ var TBot = new Twitter({
 //     	console.log(e)
 //     }
 // }
-// s
+
+// get_tweets(1135870293690507264)
+
+
 module.exports = { TBot }

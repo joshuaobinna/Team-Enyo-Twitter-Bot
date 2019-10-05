@@ -7,7 +7,7 @@ const bodyParser = require('body-parser')
 const formidableMiddleware = require('express-formidable');
 
 const app = express()
-const port = process.env.PORT || 8081
+const port = process.env.PORT || 8080
 
 const auth = require('./core/auth')
 const { TBot } = require('./core/twitterapp')
@@ -111,11 +111,6 @@ app.get('/auth/callback', auth1, passport.authenticate('twitter', { failureRedir
 
 
 app.get('/profile', auth1, function(req, res) {
-    // var request = require('sync-request');
-    // var r = request('post','http://localhost:8081/get-twitter-accounts', {
-    //     body: 'user_id=11'
-    // })
-    // console.log(r.getBody());
     res.render('profile', { layout: false, user:req.session.user })
 })
 

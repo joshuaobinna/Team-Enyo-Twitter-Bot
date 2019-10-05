@@ -140,6 +140,7 @@ async function get_tweets(user_id) {
     sql = 'select * from tweets where account_id = $1'
     params = [user_id]
     query = await exec_query(client, sql, params)
+    console.log(query.rows)
     if (query.rows.length < 1) {
         return {
             status: false,
@@ -191,11 +192,3 @@ async function update_tweets(all_tweets, user_id) {
 }
 
 module.exports = { connect_db, signin, signup, check_params, new_twitter_account, get_twitter_accounts, get_tweets, update_tweets }
-
-// client = connect_db();
-// // signup(client,'Claret','Nnamocha','devclareo@gmail.com','Alpha').then(response => {
-// //   console.log(response)
-// // })
-// signin(client,'devclareo@gmail.com', 'Alpha').then(response => {
-//  console.log(response)
-// })
